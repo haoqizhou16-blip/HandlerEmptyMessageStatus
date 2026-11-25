@@ -1,0 +1,10 @@
+* text=auto
+*.java text
+*.xml text
+*.gradle text
+*.md text
+*.properties text
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+*.png binary
+*.jar binary
