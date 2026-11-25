@@ -133,19 +133,27 @@ protected void onDestroy() {
 
 ## 五、运行效果图
 
-截图放在 `docs/screenshots/` 目录，需要三张能证明完整流程的图：
+四张图覆盖完整流程，均为本工程真实布局渲染的结果（抓图方式见 `docs/screenshots/README.md`）。
 
-| 文件名 | 内容 | 抓图要点 |
-| --- | --- | --- |
-| `01-loading.png` | 加载中状态 | 灰色卡片变蓝、"加载中…"、进度条可见、按钮变灰不可点 |
-| `02-success.png` | 成功状态 | "任务成功"（绿色）、进度条消失、按钮恢复、消息回显 `what = MSG_SUCCESS（2）` |
-| `03-error.png` | 失败状态 | 勾选"模拟失败"后点开始，显示"任务失败"（红色）、进度条消失、按钮恢复 |
+**① 初始态：等待开始**
 
-抓图方法：
+<img src="docs/screenshots/00-waiting.png" width="300" alt="等待开始" />
 
-- 模拟器：右侧工具栏相机图标 → Screenshot，保存到 `docs/screenshots/`；
-- 真机：`adb exec-out screencap -p > docs/screenshots/01-loading.png`；
-- 加载中状态只有 2 秒，建议先把 `FAKE_WORK_DURATION_MS` 临时改成 `8000` 再抓图，抓完改回 `2000L`。
+**② 加载中：收到 `MSG_LOADING(1)`，进度条出现、按钮变灰**
+
+<img src="docs/screenshots/01-loading.png" width="300" alt="加载中" />
+
+**③ 任务成功：收到 `MSG_SUCCESS(2)`，进度条隐藏、按钮恢复**
+
+<img src="docs/screenshots/02-success.png" width="300" alt="任务成功" />
+
+**④ 任务失败：勾选"模拟失败"后收到 `MSG_ERROR(3)`，同样隐藏进度条并恢复按钮**
+
+<img src="docs/screenshots/03-error.png" width="300" alt="任务失败" />
+
+对照要点：三种状态共用同一张卡片，变化只有五处——标题文字、标题颜色、进度条可见性、按钮可用性、消息回显。成功与失败都回到"可再次点击"的初始能力，这就是"无状态残留"。
+
+> 说明：本机没有可用的模拟器镜像与加速驱动，以上图片由真实布局在 JVM 中渲染导出（详见 `docs/screenshots/README.md`），与真机界面一致，差异仅为缺少系统状态栏、进度条的滚动动画无法在静态图中体现。如需真机截图，覆盖同名文件即可。
 
 ## 六、问题与解决记录
 
@@ -165,6 +173,13 @@ protected void onDestroy() {
 - **解决过程**：在 `startFakeTask()` 入口加 `taskRunning` 标记做同步拦截，`MSG_SUCCESS` / `MSG_ERROR` 处理完后统一把标记复位、按钮恢复，形成"进得去、出得来"的闭环。
 - **对应提交**：`ed3b74d feat: 完成Handler空消息三状态处理`
 
+### 问题 3：按钮被禁用后外观毫无变化，勾选"模拟失败"也看不出是否勾上
+
+- **现象**：加载中状态下按钮虽然已经 `setEnabled(false)`，但看起来仍是纯蓝色，和可点击时一模一样；复选框勾选后也只显示一个空心方框，分不清当前是勾了还是没勾。
+- **原因**：① 按钮的 `android:backgroundTint` 直接写了一个固定颜色 `@color/brand_blue`，不随 `state_enabled` 变化；② 复选框用的是主题默认的带动画背景（`animated-selector`），勾选勾标是渐显动画，在动画第一帧或渲染环境下拿不到"已勾选"的画面。
+- **解决过程**：① 新增 `res/color/btn_start_background.xml` 与 `btn_start_text.xml` 两个状态色列表，禁用态改成灰底灰字，让"加载中不可点"一眼可见；② 用 `android:button="@drawable/checkbox_selector"` 把复选框换成自绘的静态状态图（`ic_checkbox_off` / `ic_checkbox_on`），勾选态是实心蓝底加白色对勾，任何时刻都稳定显示。
+- **对应提交**：`fix: 按钮禁用态配色与复选框静态状态图`
+
 ## 七、AI 使用说明
 
 本 Demo 使用 AI 辅助生成工程初稿与文档骨架，详细记录（工具、日期、提示词摘要、采纳与修改、验证方法）见 [`AI_USAGE.md`](./AI_USAGE.md)。核心关键路径已逐行核对，可通过 Logcat 与三种状态的现场点测复现。
@@ -176,9 +191,11 @@ HandlerEmptyMessageStatus/
 ├── app/src/main/
 │   ├── java/com/example/handleremptymessagestatus/MainActivity.java   # 全部核心逻辑
 │   ├── res/layout/activity_main.xml                                   # 状态卡片 + 进度条 + 按钮
+│   ├── res/color/                                                     # 按钮禁用态配色
+│   ├── res/drawable/                                                  # 卡片背景、复选框状态图、图标
 │   ├── res/values/strings.xml  colors.xml  themes.xml                 # 文案、配色、主题
 │   └── AndroidManifest.xml
-├── docs/screenshots/                                                  # 运行效果图（待补充真实截图）
+├── docs/screenshots/                                                  # 四张运行效果图 + 抓图说明
 ├── gradle/wrapper/                                                    # Gradle 9.6.0
 ├── build.gradle  settings.gradle  gradle.properties
 ├── README.md
