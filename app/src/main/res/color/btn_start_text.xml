@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 按钮文字色：禁用时用浅灰，避免白字压在灰底上看不清 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:color="#7A828C" />
+    <item android:color="@color/text_on_brand" />
+</selector>

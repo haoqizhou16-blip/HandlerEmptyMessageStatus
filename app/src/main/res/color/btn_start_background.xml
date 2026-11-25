@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 按钮背景色：可点击时品牌蓝，禁用时灰色，让"加载中不可点"一眼可见 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:color="#C7CBD1" />
+    <item android:color="@color/brand_blue" />
+</selector>
