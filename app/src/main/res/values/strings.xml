@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">空消息状态管理</string>
+
+    <string name="page_title">Handler 空消息 · 三状态管理</string>
+    <string name="page_subtitle">Demo 4.4.5　sendEmptyMessage + handleMessage</string>
+
+    <string name="state_label">当前状态</string>
+    <string name="state_waiting_title">等待开始</string>
+    <string name="state_waiting_detail">点击下方按钮，子线程会依次发送“开始、成功、失败”三个空消息。</string>
+    <string name="state_loading_title">加载中…</string>
+    <string name="state_loading_detail">后台线程正在模拟耗时任务，主线程不阻塞，界面依然可以响应。</string>
+    <string name="state_success_title">任务成功</string>
+    <string name="state_success_detail">已收到 MSG_SUCCESS：进度条隐藏，按钮恢复可点击。</string>
+    <string name="state_error_title">任务失败</string>
+    <string name="state_error_detail">已收到 MSG_ERROR：进度条隐藏，按钮恢复可点击，可重新发起任务。</string>
+
+    <string name="message_info_none">最近消息：暂无</string>
+    <string name="message_info_format">最近消息：what = %1$s（%2$d）</string>
+
+    <string name="force_error">模拟失败（勾选后走 MSG_ERROR 分支）</string>
+    <string name="btn_start">开始任务</string>
+
+    <string name="tip_title">空消息的特点</string>
+    <string name="tip_body">sendEmptyMessage(what) 只携带一个消息编号 what，不携带任何数据。\n因此本 Demo 的成功／失败文案全部由 handleMessage() 自己生成；\n若要携带结果数据（如进度、文本），应改用 sendMessage() 并给 Message 的 obj、arg1 等字段赋值。</string>
+</resources>
